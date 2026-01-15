@@ -1,73 +1,124 @@
-# React + TypeScript + Vite
+# 🎓 Sorting Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Learn sorting algorithms through interactive visualization
 
-Currently, two official plugins are available:
+[Tiếng Việt](#tiếng-việt) | [English](#english)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## English
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+An interactive web application for learning sorting algorithms through real-time visualization. Watch how different algorithms work step-by-step while reading detailed explanations.
 
-## Expanding the ESLint configuration
+### ✨ Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **5 Sorting Algorithms**: Bubble, Selection, Insertion, Quick, Merge Sort
+- **Split-Screen Layout**: Visualization on the left, explanations on the right
+- **Step-by-Step Execution**: Run automatically or step through manually
+- **Adjustable Speed & Size**: Control animation speed and array size
+- **Mobile Responsive**: Works on desktop, tablet, and mobile devices
+- **Extensible Architecture**: Easy to add new algorithms
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🎨 Color Legend
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Color | Meaning |
+|-------|---------|
+| 🟡 Yellow | Comparing |
+| 🔴 Red | Swapping |
+| 🟢 Green | Sorted |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 🚀 Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 🛠️ Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- React 18 + TypeScript
+- Vite
+- CSS (no frameworks)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 📁 Project Structure
+
 ```
+src/
+├── algorithms/          # Sorting algorithm generators
+│   ├── registry.ts      # Central algorithm configuration
+│   ├── bubble.ts
+│   ├── selection.ts
+│   ├── insertion.ts
+│   ├── quick.ts
+│   └── merge.ts
+├── components/          # React components
+│   ├── Bars.tsx         # Visualization bars
+│   ├── Controls.tsx     # Play/pause controls
+│   ├── AlgorithmSelector.tsx
+│   └── AlgorithmExplanation.tsx
+└── App.tsx
+```
+
+### ➕ Adding New Algorithms
+
+1. Create a generator function in `src/algorithms/`
+2. Add configuration to `src/algorithms/registry.ts`
+
+---
+
+## Tiếng Việt
+
+Ứng dụng web tương tác để học thuật toán sắp xếp thông qua trực quan hóa thời gian thực. Xem cách các thuật toán hoạt động từng bước cùng với giải thích chi tiết.
+
+### ✨ Tính năng
+
+- **5 Thuật toán sắp xếp**: Bubble, Selection, Insertion, Quick, Merge Sort
+- **Giao diện chia đôi**: Trực quan bên trái, giải thích bên phải
+- **Chạy từng bước**: Tự động hoặc bấm Step để chạy thủ công
+- **Tùy chỉnh tốc độ & kích thước**: Điều chỉnh tốc độ animation và số phần tử
+- **Responsive**: Hoạt động trên desktop, tablet và điện thoại
+- **Dễ mở rộng**: Thêm thuật toán mới dễ dàng
+
+### 🎨 Chú thích màu sắc
+
+| Màu | Ý nghĩa |
+|-----|---------|
+| 🟡 Vàng | Đang so sánh |
+| 🔴 Đỏ | Đang hoán đổi |
+| 🟢 Xanh | Đã sắp xếp |
+
+### 🚀 Bắt đầu
+
+```bash
+# Cài đặt dependencies
+npm install
+
+# Chạy development server
+npm run dev
+
+# Build production
+npm run build
+```
+
+### 🛠️ Công nghệ
+
+- React 18 + TypeScript
+- Vite
+- CSS thuần (không dùng framework)
+
+### ➕ Thêm thuật toán mới
+
+1. Tạo hàm generator trong `src/algorithms/`
+2. Thêm cấu hình vào `src/algorithms/registry.ts`
+
+---
+
+## 📄 License
+
+MIT License
