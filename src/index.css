@@ -1,0 +1,421 @@
+:root {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-light: #334155;
+  --color-primary: #6366f1;
+  --color-primary-light: #818cf8;
+  --color-accent: #22d3ee;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-compare: #f59e0b;
+  --color-swap: #ef4444;
+  --color-sorted: #22c55e;
+  --color-border: #475569;
+
+  color: var(--color-text);
+  background: linear-gradient(135deg, var(--color-bg) 0%, #1a1a2e 100%);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* App Container */
+.app-container {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  background: linear-gradient(90deg, var(--color-primary-light), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app-header p {
+  margin: 8px 0 0;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+}
+
+/* Main content - Split screen */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Panel styles */
+.visualization-panel,
+.explanation-panel {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  min-width: 0; /* Prevent grid blowout */
+}
+
+.panel-header h2 {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+  color: var(--color-text);
+}
+
+/* Controls styling */
+.visualization-panel > div:first-of-type {
+  margin-bottom: 16px;
+}
+
+/* Bars Container */
+.bars-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 300px;
+  padding: 12px;
+  gap: 2px;
+  background: var(--color-surface-light);
+  border-radius: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-top: 16px;
+}
+
+.bar {
+  border-radius: 4px;
+  transition: height 0.1s ease-out;
+  min-width: 2px;
+}
+
+/* Button styling */
+button {
+  border-radius: 8px;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Range inputs */
+input[type="range"] {
+  accent-color: var(--color-primary);
+}
+
+label {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* Algorithm Explanation Styling */
+.algorithm-explanation {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.algo-title {
+  margin: 0 0 20px;
+  font-size: 1.5rem;
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.algorithm-explanation h3 {
+  margin: 20px 0 12px;
+  font-size: 1rem;
+  color: var(--color-primary-light);
+  border-bottom: 1px solid var(--color-surface-light);
+  padding-bottom: 8px;
+}
+
+/* Complexity Grid */
+.complexity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.complexity-item {
+  background: var(--color-surface-light);
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.complexity-item .label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.complexity-item .value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: 'Fira Code', monospace;
+}
+
+.complexity-item .value.best { color: var(--color-sorted); }
+.complexity-item .value.average { color: var(--color-compare); }
+.complexity-item .value.worst { color: var(--color-swap); }
+.complexity-item .value.space { color: var(--color-accent); }
+
+/* Description */
+.description-section p {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Steps list */
+.steps-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.steps-list li {
+  margin-bottom: 8px;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.steps-list li::marker {
+  color: var(--color-primary-light);
+}
+
+/* Pseudo code */
+.pseudocode {
+  background: #0d1117;
+  padding: 16px;
+  border-radius: 10px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  color: #c9d1d9;
+  line-height: 1.6;
+  border: 1px solid var(--color-surface-light);
+}
+
+/* Legend */
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.color-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+.color-box.compare { background: var(--color-compare); }
+.color-box.swap { background: var(--color-swap); }
+.color-box.sorted { background: var(--color-sorted); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .algorithm-explanation {
+    max-height: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-container {
+    padding: 12px;
+  }
+
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .app-header p {
+    font-size: 0.85rem;
+  }
+
+  .algorithm-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .algorithm-card {
+    padding: 10px 8px;
+    font-size: 0.75rem;
+  }
+
+  .complexity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .visualization-panel,
+  .explanation-panel {
+    padding: 14px;
+  }
+
+  button {
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+
+  .steps-list {
+    padding-left: 16px;
+    font-size: 0.9rem;
+  }
+
+  .pseudocode {
+    font-size: 0.75rem;
+    padding: 12px;
+  }
+}
+
+/* Algorithm Selector */
+.algorithm-selector {
+  margin-bottom: 20px;
+  max-width: 1600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.selector-label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.algorithm-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.algorithm-card {
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 70px;
+}
+
+.algorithm-card:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.algorithm-card.active {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+}
+
+.algorithm-card .algo-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.algorithm-card .algo-complexity {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-family: 'Fira Code', monospace;
+}
+
+.algorithm-card.active .algo-name,
+.algorithm-card.active .algo-complexity {
+  color: white;
+}
+
+/* Bars responsive */
+@media (max-width: 640px) {
+  .algorithm-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .algorithm-card {
+    min-height: 60px;
+    padding: 10px 8px;
+  }
+
+  .algorithm-card .algo-name {
+    font-size: 0.75rem;
+  }
+
+  .algorithm-card .algo-complexity {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .algorithm-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
