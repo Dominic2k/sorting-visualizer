@@ -3,6 +3,8 @@ import Bars from "./components/Bars";
 import Controls from "./components/Controls";
 import AlgorithmSelector from "./components/AlgorithmSelector";
 import AlgorithmExplanation from "./components/AlgorithmExplanation";
+import { UserMenu } from "./components/UserMenu";
+import { AuthModal } from "./components/AuthModal";
 import { algorithms, getAlgorithmById } from "./algorithms/registry";
 import type { Step } from "./algorithms/types";
 import { applyStepToState, createInitialHighlights } from "./runner/applyStep";
@@ -18,6 +20,7 @@ export default function App() {
   const [highlights, setHighlights] = useState(() => createInitialHighlights());
   const [speedMs, setSpeedMs] = useState(80);
   const [running, setRunning] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const genRef = useRef<Generator<Step> | null>(null);
   const doneRef = useRef(false);
@@ -108,10 +111,18 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Auth Modal */}
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
+
       {/* Header */}
       <header className="app-header">
-        <h1>🎓 Sorting Visualizer</h1>
-        <p>Học thuật toán sắp xếp qua trực quan hóa</p>
+        <div className="header-left">
+          <h1>🎓 Sorting Visualizer</h1>
+          <p>Học thuật toán sắp xếp qua trực quan hóa</p>
+        </div>
+        <div className="header-right">
+          <UserMenu onOpenAuth={() => setShowAuthModal(true)} />
+        </div>
       </header>
 
       {/* Algorithm Selector */}
