@@ -24,14 +24,27 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ isOpen, onClose, type })
       try {
         if (type === 'statistics') {
           const data = await statisticsApi.getAllStatistics();
-          setStats(data);
+          setStats(Array.isArray(data) ? data : []);
         } else {
           const data = await historyApi.getHistory(0, 20);
-          setHistory(data.content);
+          // Handle both array and paginated response
+          if (Array.isArray(data)) {
+            setHistory(data);
+          } else if (data && data.content) {
+            setHistory(data.content);
+          } else {
+            setHistory([]);
+          }
         }
-      } catch (err) {
-        setError('Failed to load data');
-        console.error(err);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        console.error('Failed to load data:', err);
+        // Check if it's a 401/403 error
+        if (errorMessage.includes('401') || errorMessage.includes('403')) {
+          setError('Please login again');
+        } else {
+          setError('No data available yet');
+        }
       } finally {
         setLoading(false);
       }
@@ -51,7 +64,7 @@ export const StatsPanel: React.FC<StatsPanelProps> = ({ isOpen, onClose, type })
         
         {loading && <div className="stats-loading">Loading...</div>}
         
-        {error && <div className="stats-error">{error}</div>}
+        {error && <div className="stats-empty">{error}</div>}
         
         {!loading && !error && type === 'statistics' && (
           <div className="stats-grid">

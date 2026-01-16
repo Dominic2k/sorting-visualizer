@@ -8,37 +8,48 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1100;
   backdrop-filter: blur(4px);
+  padding: 20px;
 }
 
 .stats-panel {
   background: linear-gradient(145deg, #1e1e2e, #2a2a3e);
   border-radius: 16px;
   padding: 2rem;
-  width: 90%;
+  width: 100%;
   max-width: 700px;
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: auto;
 }
 
 .stats-panel-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: none;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   font-size: 1.5rem;
   color: #888;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .stats-panel-close:hover {
   color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  transform: none;
+  box-shadow: none;
 }
 
 .stats-panel h2 {
@@ -93,9 +104,14 @@
   color: #fff;
 }
 
+.history-list {
+  overflow-x: auto;
+}
+
 .history-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 400px;
 }
 
 .history-table th,
@@ -119,4 +135,16 @@
 
 .history-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 640px) {
+  .stats-panel {
+    padding: 1.5rem;
+    margin: 10px;
+    max-height: 90vh;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
