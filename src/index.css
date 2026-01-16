@@ -114,6 +114,29 @@ body {
   color: var(--color-text);
 }
 
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.metrics {
+  display: flex;
+  gap: 16px;
+  font-size: 0.875rem;
+}
+
+.metrics span {
+  color: var(--color-text-muted);
+}
+
+.metrics strong {
+  color: var(--color-accent);
+  font-family: 'Fira Code', monospace;
+}
+
 /* Controls styling */
 .visualization-panel > div:first-of-type {
   margin-bottom: 16px;

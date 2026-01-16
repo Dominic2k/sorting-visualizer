@@ -8,12 +8,15 @@ import { AuthModal } from "./components/AuthModal";
 import { algorithms, getAlgorithmById } from "./algorithms/registry";
 import type { Step } from "./algorithms/types";
 import { applyStepToState, createInitialHighlights } from "./runner/applyStep";
+import { useAuth } from "./context/AuthContext";
+import { historyApi } from "./api/historyApi";
 
 function randomArray(size: number) {
   return Array.from({ length: size }, () => Math.floor(Math.random() * 100) + 1);
 }
 
 export default function App() {
+  const { isAuthenticated } = useAuth();
   const [selectedAlgoId, setSelectedAlgoId] = useState(algorithms[0].id);
   const [size, setSize] = useState(30);
   const [array, setArray] = useState(() => randomArray(30));
@@ -22,8 +25,13 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  // Tracking metrics
+  const [comparisons, setComparisons] = useState(0);
+  const [swaps, setSwaps] = useState(0);
+
   const genRef = useRef<Generator<Step> | null>(null);
   const doneRef = useRef(false);
+  const startTimeRef = useRef<number | null>(null);
 
   // Lấy config của thuật toán đang chọn
   const currentAlgo = getAlgorithmById(selectedAlgoId) ?? algorithms[0];
@@ -31,6 +39,29 @@ export default function App() {
   const resetGenerator = () => {
     genRef.current = currentAlgo.generator([...array]);
     doneRef.current = false;
+    setComparisons(0);
+    setSwaps(0);
+    startTimeRef.current = Date.now();
+  };
+
+  // Save history when sorting completes
+  const saveHistory = async () => {
+    if (!isAuthenticated || !startTimeRef.current) return;
+    
+    const executionTimeMs = Date.now() - startTimeRef.current;
+    
+    try {
+      await historyApi.saveHistory({
+        algorithmName: currentAlgo.name,
+        arraySize: array.length,
+        comparisonCount: comparisons,
+        swapCount: swaps,
+        executionTimeMs
+      });
+      console.log('History saved successfully');
+    } catch (error) {
+      console.error('Failed to save history:', error);
+    }
   };
 
   // Reset khi đổi thuật toán hoặc size
@@ -39,6 +70,9 @@ export default function App() {
     setRunning(false);
     genRef.current = null;
     doneRef.current = false;
+    setComparisons(0);
+    setSwaps(0);
+    startTimeRef.current = null;
   }, [selectedAlgoId, array.length]);
 
   const onGenerate = () => {
@@ -48,6 +82,9 @@ export default function App() {
     setRunning(false);
     genRef.current = null;
     doneRef.current = false;
+    setComparisons(0);
+    setSwaps(0);
+    startTimeRef.current = null;
   };
 
   const runOneStep = () => {
@@ -57,6 +94,13 @@ export default function App() {
 
     if (done || !value) return;
 
+    // Track metrics
+    if (value.type === 'COMPARE') {
+      setComparisons(c => c + 1);
+    } else if (value.type === 'SWAP') {
+      setSwaps(s => s + 1);
+    }
+
     const result = applyStepToState(array, highlights, value);
     setArray(result.arr);
     setHighlights(result.hl);
@@ -64,6 +108,8 @@ export default function App() {
     if (result.done) {
       doneRef.current = true;
       setRunning(false);
+      // Save history when done
+      setTimeout(() => saveHistory(), 100);
     }
   };
 
@@ -96,6 +142,9 @@ export default function App() {
     setRunning(false);
     genRef.current = null;
     doneRef.current = false;
+    setComparisons(0);
+    setSwaps(0);
+    startTimeRef.current = null;
   };
 
   const onAlgorithmChange = (id: string) => {
@@ -107,6 +156,9 @@ export default function App() {
     setRunning(false);
     genRef.current = null;
     doneRef.current = false;
+    setComparisons(0);
+    setSwaps(0);
+    startTimeRef.current = null;
   };
 
   return (
@@ -138,6 +190,11 @@ export default function App() {
         <section className="visualization-panel">
           <div className="panel-header">
             <h2>⚡ {currentAlgo.name}</h2>
+            {/* Metrics Display */}
+            <div className="metrics">
+              <span>Comparisons: <strong>{comparisons}</strong></span>
+              <span>Swaps: <strong>{swaps}</strong></span>
+            </div>
           </div>
 
           <Controls
@@ -163,4 +220,3 @@ export default function App() {
     </div>
   );
 }
-
