@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Bars from "./components/Bars";
 import Controls from "./components/Controls";
 import AlgorithmSelector from "./components/AlgorithmSelector";
@@ -25,44 +25,58 @@ export default function App() {
   const [running, setRunning] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
-  // Tracking metrics
+  // Tracking metrics with state (for display) and refs (for save)
   const [comparisons, setComparisons] = useState(0);
   const [swaps, setSwaps] = useState(0);
+  const comparisonsRef = useRef(0);
+  const swapsRef = useRef(0);
 
   const genRef = useRef<Generator<Step> | null>(null);
   const doneRef = useRef(false);
   const startTimeRef = useRef<number | null>(null);
+  const arraySizeRef = useRef(30);
 
   // Lấy config của thuật toán đang chọn
   const currentAlgo = getAlgorithmById(selectedAlgoId) ?? algorithms[0];
+  const currentAlgoRef = useRef(currentAlgo);
+  currentAlgoRef.current = currentAlgo;
 
-  const resetGenerator = () => {
+  // Save history when sorting completes
+  const saveHistory = useCallback(async () => {
+    if (!isAuthenticated || !startTimeRef.current) {
+      console.log('Not saving: not authenticated or no start time');
+      return;
+    }
+    
+    const executionTimeMs = Date.now() - startTimeRef.current;
+    const payload = {
+      algorithmName: currentAlgoRef.current.name,
+      arraySize: arraySizeRef.current,
+      comparisonCount: comparisonsRef.current,
+      swapCount: swapsRef.current,
+      executionTimeMs
+    };
+    
+    console.log('Saving history:', payload);
+    
+    try {
+      const result = await historyApi.saveHistory(payload);
+      console.log('History saved successfully:', result);
+    } catch (error) {
+      console.error('Failed to save history:', error);
+    }
+  }, [isAuthenticated]);
+
+  const resetGenerator = useCallback(() => {
     genRef.current = currentAlgo.generator([...array]);
     doneRef.current = false;
     setComparisons(0);
     setSwaps(0);
+    comparisonsRef.current = 0;
+    swapsRef.current = 0;
     startTimeRef.current = Date.now();
-  };
-
-  // Save history when sorting completes
-  const saveHistory = async () => {
-    if (!isAuthenticated || !startTimeRef.current) return;
-    
-    const executionTimeMs = Date.now() - startTimeRef.current;
-    
-    try {
-      await historyApi.saveHistory({
-        algorithmName: currentAlgo.name,
-        arraySize: array.length,
-        comparisonCount: comparisons,
-        swapCount: swaps,
-        executionTimeMs
-      });
-      console.log('History saved successfully');
-    } catch (error) {
-      console.error('Failed to save history:', error);
-    }
-  };
+    arraySizeRef.current = array.length;
+  }, [currentAlgo, array]);
 
   // Reset khi đổi thuật toán hoặc size
   useEffect(() => {
@@ -72,6 +86,8 @@ export default function App() {
     doneRef.current = false;
     setComparisons(0);
     setSwaps(0);
+    comparisonsRef.current = 0;
+    swapsRef.current = 0;
     startTimeRef.current = null;
   }, [selectedAlgoId, array.length]);
 
@@ -84,20 +100,24 @@ export default function App() {
     doneRef.current = false;
     setComparisons(0);
     setSwaps(0);
+    comparisonsRef.current = 0;
+    swapsRef.current = 0;
     startTimeRef.current = null;
   };
 
-  const runOneStep = () => {
+  const runOneStep = useCallback(() => {
     if (!genRef.current) resetGenerator();
     const g = genRef.current!;
     const { value, done } = g.next();
 
     if (done || !value) return;
 
-    // Track metrics
+    // Track metrics with both state and refs
     if (value.type === 'COMPARE') {
+      comparisonsRef.current += 1;
       setComparisons(c => c + 1);
     } else if (value.type === 'SWAP') {
+      swapsRef.current += 1;
       setSwaps(s => s + 1);
     }
 
@@ -108,10 +128,10 @@ export default function App() {
     if (result.done) {
       doneRef.current = true;
       setRunning(false);
-      // Save history when done
-      setTimeout(() => saveHistory(), 100);
+      // Save history when done - use setTimeout to ensure state is updated
+      saveHistory();
     }
-  };
+  }, [array, highlights, resetGenerator, saveHistory]);
 
   // Timer loop khi running
   useEffect(() => {
@@ -123,8 +143,7 @@ export default function App() {
     }, speedMs);
 
     return () => window.clearInterval(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [running, speedMs, array, highlights]);
+  }, [running, speedMs, runOneStep]);
 
   const onStart = () => {
     if (!genRef.current) resetGenerator();
@@ -144,6 +163,8 @@ export default function App() {
     doneRef.current = false;
     setComparisons(0);
     setSwaps(0);
+    comparisonsRef.current = 0;
+    swapsRef.current = 0;
     startTimeRef.current = null;
   };
 
@@ -158,6 +179,8 @@ export default function App() {
     doneRef.current = false;
     setComparisons(0);
     setSwaps(0);
+    comparisonsRef.current = 0;
+    swapsRef.current = 0;
     startTimeRef.current = null;
   };
 
