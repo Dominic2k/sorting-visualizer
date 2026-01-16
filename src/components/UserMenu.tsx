@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { StatsPanel } from './StatsPanel';
 import './UserMenu.css';
 
 interface UserMenuProps {
@@ -9,6 +10,7 @@ interface UserMenuProps {
 export const UserMenu: React.FC<UserMenuProps> = ({ onOpenAuth }) => {
   const { user, isAuthenticated, logout, isLoading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [statsPanel, setStatsPanel] = useState<'statistics' | 'history' | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,33 +36,41 @@ export const UserMenu: React.FC<UserMenuProps> = ({ onOpenAuth }) => {
   }
 
   return (
-    <div className="user-menu" ref={menuRef}>
-      <button className="user-menu-trigger" onClick={() => setIsOpen(!isOpen)}>
-        <span className="user-avatar">
-          {user?.displayName?.charAt(0).toUpperCase()}
-        </span>
-        <span className="user-name">{user?.displayName}</span>
-        <span className="dropdown-arrow">▼</span>
-      </button>
-      
-      {isOpen && (
-        <div className="user-menu-dropdown">
-          <div className="user-menu-header">
-            <span className="user-email">{user?.email}</span>
+    <>
+      <div className="user-menu" ref={menuRef}>
+        <button className="user-menu-trigger" onClick={() => setIsOpen(!isOpen)}>
+          <span className="user-avatar">
+            {user?.displayName?.charAt(0).toUpperCase()}
+          </span>
+          <span className="user-name">{user?.displayName}</span>
+          <span className="dropdown-arrow">▼</span>
+        </button>
+        
+        {isOpen && (
+          <div className="user-menu-dropdown">
+            <div className="user-menu-header">
+              <span className="user-email">{user?.email}</span>
+            </div>
+            <div className="user-menu-divider" />
+            <button className="user-menu-item" onClick={() => { setIsOpen(false); setStatsPanel('statistics'); }}>
+              📊 My Statistics
+            </button>
+            <button className="user-menu-item" onClick={() => { setIsOpen(false); setStatsPanel('history'); }}>
+              📜 History
+            </button>
+            <div className="user-menu-divider" />
+            <button className="user-menu-item logout" onClick={logout}>
+              🚪 Sign Out
+            </button>
           </div>
-          <div className="user-menu-divider" />
-          <button className="user-menu-item" onClick={() => { setIsOpen(false); }}>
-            📊 My Statistics
-          </button>
-          <button className="user-menu-item" onClick={() => { setIsOpen(false); }}>
-            📜 History
-          </button>
-          <div className="user-menu-divider" />
-          <button className="user-menu-item logout" onClick={logout}>
-            🚪 Sign Out
-          </button>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+      
+      <StatsPanel 
+        isOpen={statsPanel !== null} 
+        onClose={() => setStatsPanel(null)} 
+        type={statsPanel || 'statistics'} 
+      />
+    </>
   );
 };

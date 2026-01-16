@@ -1,0 +1,122 @@
+.stats-panel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.stats-panel {
+  background: linear-gradient(145deg, #1e1e2e, #2a2a3e);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-panel-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.stats-panel-close:hover {
+  color: #fff;
+}
+
+.stats-panel h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.stats-loading,
+.stats-error,
+.stats-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+}
+
+.stats-error {
+  color: #ef4444;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-card h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: #7c3aed;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+.stat-row span {
+  color: #888;
+}
+
+.stat-row strong {
+  color: #fff;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-table th {
+  color: #888;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.history-table td {
+  color: #fff;
+  font-size: 0.875rem;
+}
+
+.history-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
