@@ -8,10 +8,14 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, displayName: string) => Promise<void>;
+  loginWithGoogle: () => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Backend URL for OAuth2
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserInfo | null>(null);
@@ -20,6 +24,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     const initAuth = async () => {
+      // Handle OAuth2 callback - check URL for token
+      const urlParams = new URLSearchParams(window.location.search);
+      const callbackToken = urlParams.get('token');
+      
+      if (callbackToken) {
+        // Save token from OAuth2 callback
+        localStorage.setItem('token', callbackToken);
+        setToken(callbackToken);
+        
+        // Clean up URL (remove token from URL bar)
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        try {
+          const userInfo = await authApi.getCurrentUser();
+          setUser(userInfo);
+        } catch {
+          localStorage.removeItem('token');
+          setToken(null);
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      // Normal token check
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
         try {
@@ -56,6 +84,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     handleAuthSuccess(response);
   };
 
+  // Redirect to backend OAuth2 endpoint
+  const loginWithGoogle = () => {
+    window.location.href = `${BACKEND_URL}/oauth2/authorization/google`;
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
@@ -71,6 +104,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isLoading,
         login,
         register,
+        loginWithGoogle,
         logout,
       }}
     >
@@ -86,3 +120,4 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+

@@ -135,3 +135,26 @@
 .auth-switch-btn:hover {
   color: #a855f7;
 }
+
+/* Divider between OAuth and form login */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.25rem 0;
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.auth-divider span {
+  padding: 0 1rem;
+  color: #888;
+}
+

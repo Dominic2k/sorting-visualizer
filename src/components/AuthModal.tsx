@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { GoogleLoginButton } from './GoogleLoginButton';
 import './AuthModal.css';
 
 interface AuthModalProps {
@@ -15,7 +16,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { login, register } = useAuth();
+  const { login, register, loginWithGoogle } = useAuth();
 
   if (!isOpen) return null;
 
@@ -52,6 +53,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
     setError('');
   };
 
+  const handleGoogleLogin = () => {
+    loginWithGoogle();
+  };
+
   return (
     <div className="auth-modal-overlay" onClick={onClose}>
       <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
@@ -60,6 +65,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
         <h2 className="auth-modal-title">
           {mode === 'login' ? 'Welcome Back' : 'Create Account'}
         </h2>
+
+        {/* Google Login Button */}
+        <GoogleLoginButton onClick={handleGoogleLogin} disabled={isSubmitting} />
+        
+        {/* Divider */}
+        <div className="auth-divider">
+          <span>hoặc</span>
+        </div>
         
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'register' && (
@@ -118,3 +131,4 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMo
     </div>
   );
 };
+
